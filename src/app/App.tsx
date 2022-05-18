@@ -1,5 +1,5 @@
 import { For, Show, Suspense, createSignal } from 'solid-js';
-import { createFrom } from '@lib';
+import { createSession, createFrom } from '@lib';
 import './App.css';
 
 function CharacterDetails(p) {
@@ -12,7 +12,7 @@ function CharacterDetails(p) {
         .eq('slug', characterSlug)
         .single();
       return data;
-    }
+    },
   );
 
   const genderMap = {
@@ -77,10 +77,67 @@ function CharactersView() {
   );
 }
 
+function SigninForm() {
+  const [email, setEmail] = createSignal('adityaa803@gmail.com');
+  const [password, setPassword] = createSignal('pass');
+  const { signIn } = createSession();
+
+  function handleChange(fieldName, event) {
+    const fieldValue = event.target.value;
+
+    if (fieldName === 'email') {
+      setEmail(fieldValue);
+    }
+
+    if (fieldName === 'password') {
+      setPassword(fieldValue);
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const { session, user, error } = await signIn(
+      {
+        email: email(),
+        password: password(),
+      },
+      {
+        shouldCreateUser: true,
+      },
+    );
+    console.log(`error`, error); // aditodo remove this
+    console.log(`session`, session); // aditodo remove this
+    console.log(`user`, user); // aditodo remove this
+  }
+
+  return (
+    <form class="auth-form auth-form--signin" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter Email"
+        value={email()}
+        onChange={[handleChange, 'email']}
+      />
+      <br />
+      <input
+        type="password"
+        name="password"
+        placeholder="Enter Password"
+        value={password()}
+        onChange={[handleChange, 'password']}
+      />
+      <br />
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+
 function App() {
   return (
     <div class="App">
       <h2>Hey</h2>
+      <SigninForm />
       <Suspense fallback={<div>Loading Characters...</div>}>
         <CharactersView />
       </Suspense>

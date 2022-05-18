@@ -1,3 +1,9 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+}
+
 .character-item.active {
   background-color: hotpink;
 }
