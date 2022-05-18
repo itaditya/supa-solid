@@ -1,4 +1,4 @@
-import { For, Show, Suspense, createSignal, createEffect } from 'solid-js';
+import { For, Show, Suspense, createSignal } from 'solid-js';
 import { createFrom } from '@lib';
 import './App.css';
 
@@ -69,7 +69,9 @@ function CharactersView() {
         </For>
       </ul>
       <Show when={activeSlug() !== null}>
-        <CharacterDetails characterSlug={activeSlug} />
+        <Suspense fallback={<div>Loading details...</div>}>
+          <CharacterDetails characterSlug={activeSlug} />
+        </Suspense>
       </Show>
     </section>
   );
@@ -79,7 +81,7 @@ function App() {
   return (
     <div class="App">
       <h2>Hey</h2>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading Characters...</div>}>
         <CharactersView />
       </Suspense>
     </div>
