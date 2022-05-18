@@ -1,5 +1,5 @@
-import { For, Show, Suspense, createSignal } from 'solid-js';
-import { createSession, createFrom } from '@lib';
+import { For, Show, Suspense, createSignal, createEffect } from 'solid-js';
+import { createSession, createUser, createFrom } from '@lib';
 import './App.css';
 
 function CharacterDetails(p) {
@@ -96,15 +96,10 @@ function SigninForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const { session, user, error } = await signIn(
-      {
-        email: email(),
-        password: password(),
-      },
-      {
-        shouldCreateUser: true,
-      },
-    );
+    const { session, user, error } = await signIn({
+      email: email(),
+      // password: password(),
+    });
     console.log(`error`, error); // aditodo remove this
     console.log(`session`, session); // aditodo remove this
     console.log(`user`, user); // aditodo remove this
@@ -133,11 +128,48 @@ function SigninForm() {
   );
 }
 
+function EditEmailForm() {
+  const { user, update } = createUser();
+  const [email, setEmail] = createSignal('');
+
+  createEffect(() => {
+    const userValue = user();
+    setEmail(userValue.email);
+  });
+
+  function handleChange(event) {
+    const fieldValue = event.target.value;
+    setEmail(fieldValue);
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    await update({
+      email: email(),
+    });
+  }
+
+  return (
+    <form class="auth-form auth-form--edit-email" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter Email"
+        value={email()}
+        onChange={handleChange}
+      />
+      <br />
+      <button type="submit">Save</button>
+    </form>
+  );
+}
+
 function App() {
   return (
     <div class="App">
       <h2>Hey</h2>
       <SigninForm />
+      <EditEmailForm />
       <Suspense fallback={<div>Loading Characters...</div>}>
         <CharactersView />
       </Suspense>
