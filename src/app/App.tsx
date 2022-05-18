@@ -134,7 +134,10 @@ function EditEmailForm() {
 
   createEffect(() => {
     const userValue = user();
-    setEmail(userValue.email);
+
+    if (userValue) {
+      setEmail(userValue.email);
+    }
   });
 
   function handleChange(event) {
@@ -164,10 +167,17 @@ function EditEmailForm() {
   );
 }
 
+function SignoutButton() {
+  const { signOut } = createSession();
+
+  return <button onClick={signOut}>Sign Out</button>;
+}
+
 function App() {
   return (
     <div class="App">
       <h2>Hey</h2>
+      <SignoutButton />
       <SigninForm />
       <EditEmailForm />
       <Suspense fallback={<div>Loading Characters...</div>}>

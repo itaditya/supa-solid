@@ -13,13 +13,13 @@ interface CreateUserReturn {
 export function createUser(): CreateUserReturn {
   const { auth } = useSupabaseClient();
   const initialUser = auth.user();
-  const [user, setUser] = createSignal(initialUser);
+  const [user, setUser] = createSignal<User>(initialUser);
   const [status, setStatus] = createSignal<Status>('idle');
 
   createEffect(() => {
     auth.onAuthStateChange((event, session) => {
       console.log(event, session);
-      setUser(auth.user());
+      setUser(session.user);
     });
   });
 
